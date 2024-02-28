@@ -18,8 +18,12 @@ class Studentupdate {
   @HiveField(4)
   int? id;
 
+  @HiveField(5)
+  String? place;
+
   Studentupdate(
       {required this.domain,
+      required this.place,
       required this.image,
       required this.name,
       required this.phone,

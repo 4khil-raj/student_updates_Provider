@@ -18,6 +18,7 @@ class StudentupdateAdapter extends TypeAdapter<Studentupdate> {
     };
     return Studentupdate(
       domain: fields[2] as String?,
+      place: fields[5] as String?,
       image: fields[3] as String?,
       name: fields[0] as String?,
       phone: fields[1] as int?,
@@ -28,7 +29,7 @@ class StudentupdateAdapter extends TypeAdapter<Studentupdate> {
   @override
   void write(BinaryWriter writer, Studentupdate obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class StudentupdateAdapter extends TypeAdapter<Studentupdate> {
       ..writeByte(3)
       ..write(obj.image)
       ..writeByte(4)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(5)
+      ..write(obj.place);
   }
 
   @override

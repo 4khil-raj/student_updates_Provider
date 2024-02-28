@@ -11,10 +11,12 @@ Future<void> addStudent(Studentupdate value) async {
       id,
       Studentupdate(
           domain: studentdata!.domain,
+          place: studentdata.place,
           image: studentdata.image,
           name: studentdata.name,
           phone: studentdata.phone,
           id: id));
+  getStudent();
 }
 
 Future<void> getStudent() async {
