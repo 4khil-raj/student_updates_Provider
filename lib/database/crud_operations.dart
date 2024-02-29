@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_updates_provider/database/fuctions.dart';
@@ -13,7 +15,7 @@ Future<void> registerStudent(
     int phone,
     String image,
     GlobalKey<FormState> formKey) async {
-  if (image.isEmpty) {
+  if (image!.isEmpty) {
     print('nullimage');
     return;
   }
@@ -43,12 +45,33 @@ void showSnackBar(BuildContext context, String message, Color color) {
   ));
 }
 
+//editting
+Future<void> editStudent(context, File? image, String name, String domain,
+    String place, int phone, int id) async {
+  final editbox = await Hive.openBox<Studentupdate>('student');
+  final existingStudent =
+      editbox.values.firstWhere((element) => element.id == id);
+  if (existingStudent != null) {
+    existingStudent.name = name;
+    existingStudent.image = image!.path;
+    existingStudent.domain = domain;
+    existingStudent.place = place;
+    existingStudent.phone = phone;
+
+    await editbox.put(id, existingStudent);
+    getStudent();
+    Navigator.pop(context);
+  }
+}
+
 void delete(BuildContext context, int? id) {
   showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete'),
+          title: Text(
+            'Delete',
+          ),
           content: Text('Remove the Student'),
           actions: [
             ElevatedButton(

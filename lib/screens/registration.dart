@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:student_updates_provider/database/crud_operations.dart';
+import 'package:student_updates_provider/database/models.dart';
+import 'package:student_updates_provider/database/validation.dart';
 import 'package:student_updates_provider/provider/helperclass.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
-
+  RegisterScreen({super.key, required this.isEdit, this.value});
+  bool isEdit = false;
+  Studentupdate? value;
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -40,9 +43,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final contactController = TextEditingController();
   final studentnameContoller = TextEditingController();
+  Validations? val = Validations();
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isEdit) {
+      contactController.text = widget.value!.phone.toString();
+      studentnameContoller.text = widget.value!.name.toString();
+      selectedImage = File(widget.value!.image.toString());
+      selectedDomain = widget.value!.domain;
+      selectedPlace = widget.value!.place;
+    }
     return Consumer<StudentProvider>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
@@ -95,8 +106,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   }
                                 },
                                 icon: Icon(Icons.image)),
-                            IconButton(
-                                onPressed: () {}, icon: Icon(Icons.edit)),
                           ],
                         )
                       ],
@@ -106,6 +115,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height: 10,
                   ),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: Validations.nameValidator,
                     controller: studentnameContoller,
                     decoration: InputDecoration(hintText: 'Student Name'),
                   ),
@@ -113,6 +124,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height: 25,
                   ),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: Validations.phoneValidator,
                     controller: contactController,
                     decoration: InputDecoration(hintText: 'Contact'),
                   ),
@@ -177,31 +190,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(
                     height: 25,
                   ),
-                  InkWell(
-                    onTap: () {
-                      registerStudent(
-                          context,
-                          studentnameContoller.text.trim(),
-                          selectedPlace!,
-                          selectedDomain!,
-                          int.parse(contactController.text),
-                          selectedImage!.path,
-                          _formKey);
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white),
+                  widget.isEdit == false
+                      ? InkWell(
+                          onTap: () {
+                            if (_formKey.currentState!.validate() &&
+                                studentnameContoller.text.isNotEmpty &&
+                                contactController.text.isNotEmpty &&
+                                selectedDomain != null &&
+                                selectedPlace != null &&
+                                selectedImage!.path.isNotEmpty) {
+                              registerStudent(
+                                  context,
+                                  studentnameContoller.text.trim(),
+                                  selectedPlace.toString(),
+                                  selectedDomain.toString(),
+                                  int.parse(contactController.text),
+                                  selectedImage!.path.toString(),
+                                  _formKey);
+                            } else {
+                              studentnameContoller.clear();
+                              contactController.clear();
+                              selectedImage =
+                                  value.getimage(selectedImage = null);
+                              selectedDomain = null;
+                              selectedPlace = null;
+                              showSnackBar(
+                                  context, 'Register Faild!', Colors.red);
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Register',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ))
+                      : InkWell(
+                          onTap: () {
+                            if (_formKey.currentState!.validate() &&
+                                studentnameContoller.text.isNotEmpty &&
+                                contactController.text.isNotEmpty &&
+                                selectedDomain != null &&
+                                selectedPlace != null &&
+                                selectedImage!.path.isNotEmpty) {
+                              editStudent(
+                                  context,
+                                  selectedImage,
+                                  studentnameContoller.text,
+                                  selectedDomain.toString(),
+                                  selectedPlace.toString(),
+                                  int.parse(contactController.text.toString()),
+                                  int.parse(widget.value!.id.toString()));
+                            } else {
+                              studentnameContoller.clear();
+                              contactController.clear();
+                              selectedImage =
+                                  value.getimage(selectedImage = null);
+                              // value.getimage(File(selectedImage.path.));
+                              selectedDomain = null;
+                              selectedPlace = null;
+                              showSnackBar(
+                                  context, 'Register Faild!', Colors.red);
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Update',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
