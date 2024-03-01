@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
 
 import 'dart:io';
 
@@ -15,8 +15,7 @@ Future<void> registerStudent(
     int phone,
     String image,
     GlobalKey<FormState> formKey) async {
-  if (image!.isEmpty) {
-    print('nullimage');
+  if (image.isEmpty) {
     return;
   }
   if (formKey.currentState!.validate() &&

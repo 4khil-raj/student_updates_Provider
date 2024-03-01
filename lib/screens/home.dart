@@ -24,6 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getStudent();
     super.initState();
+    searchControler.removeListener(() {
+      searchText;
+    });
   }
 
   String searchText = '';
@@ -103,11 +106,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Container(
                                         height: 40,
                                         child: TextFormField(
-                                          onChanged: (value) {
-                                            onSearchChange(value);
+                                          onChanged: (values) {
+                                            value.getsearchText(values);
+                                            onSearchChange(values);
                                           },
                                           controller: searchControler,
                                           decoration: InputDecoration(
+                                              suffixIcon: searchControler
+                                                      .text.isEmpty
+                                                  ? Icon(
+                                                      Icons.mic,
+                                                      color: Colors.black,
+                                                    )
+                                                  : IconButton(
+                                                      onPressed: () {
+                                                        searchControler.clear();
+                                                        value.getsearchText('');
+                                                        getStudent();
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.clear,
+                                                        color: Colors.black,
+                                                      )),
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: const Color.fromARGB(
@@ -157,17 +177,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  onSearchChange(String value) {
+  onSearchChange(
+    String values,
+  ) {
     final studentdb = Hive.box<Studentupdate>('student');
     final students = studentdb.values.toList();
-    value = searchControler.text;
+    values = searchControler.text;
 
     if (debouncer?.isActive ?? false) debouncer?.cancel();
     debouncer = Timer(Duration(milliseconds: 200), () {
       if (this.searchText != searchControler) {
         final filterdStudent = students
-            .where((students) =>
-                students.name!.toLowerCase().contains(value.toLowerCase()))
+            .where((students) => students.name!
+                .toLowerCase()
+                .trim()
+                .contains(values.toLowerCase().trim()))
             .toList();
         studentlist.value = filterdStudent;
       }

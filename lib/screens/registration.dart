@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, must_be_immutable
 
 import 'dart:io';
 
@@ -57,15 +57,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Consumer<StudentProvider>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          elevation: 0,
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          centerTitle: true,
-          title: Text(
-            'Register',
-            style: TextStyle(color: Colors.black, fontSize: 20),
-          ),
-        ),
+            iconTheme: IconThemeData(color: Colors.black),
+            elevation: 0,
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            centerTitle: true,
+            title: widget.isEdit
+                ? Text(
+                    'Edit',
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  )
+                : Text(
+                    'Register',
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  )),
         body: Padding(
           padding: const EdgeInsets.only(left: 12, right: 12),
           child: SingleChildScrollView(

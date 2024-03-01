@@ -7,6 +7,7 @@ import 'package:student_updates_provider/database/crud_operations.dart';
 import 'package:student_updates_provider/database/fuctions.dart';
 import 'package:student_updates_provider/database/models.dart';
 import 'package:student_updates_provider/screens/registration.dart';
+import 'package:student_updates_provider/widget/bottomsheet.dart';
 
 ValueNotifier<bool> scroll = ValueNotifier(false);
 
@@ -59,7 +60,15 @@ class _CustomListState extends State<CustomList> {
                         itemBuilder: (BuildContext context, int index) {
                           final studentdata = students.reversed.toList()[index];
                           return InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              bottomSheet(
+                                  context,
+                                  studentdata.name!,
+                                  studentdata.domain!,
+                                  studentdata.place!,
+                                  studentdata.phone!,
+                                  studentdata.image!);
+                            },
                             child: Slidable(
                               endActionPane: ActionPane(
                                   motion: StretchMotion(),
