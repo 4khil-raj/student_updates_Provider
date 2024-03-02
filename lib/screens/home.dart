@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String searchText = '';
   Timer? debouncer;
 
-  CustomList? sear;
+  //CustomList? sear;
   final searchControler = TextEditingController();
   @override
   Widget build(BuildContext context) {
